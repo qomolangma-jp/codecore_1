@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CODE・CORE | Unprogramming</title>
+    <style>
+        /* 全体のリセットと共通設定 */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-dark: #0f111a;
+            --bg-card: #161925;
+            --primary-emerald: #00f0b5;
+            --primary-blue: #0077ff;
+            --primary-purple: #8a2be2;
+            --text-main: #ffffff;
+            --text-sub: #b0b5c6;
+            --font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* 背景の幾何学的な装飾 (無機質かつポップ) */
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 240, 181, 0.1) 0%, rgba(0,0,0,0) 70%);
+            top: -200px;
+            right: -200px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .bg-glow-2 {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.08) 0%, rgba(0,0,0,0) 70%);
+            bottom: -100px;
+            left: -100px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ヘッダー */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 4%;
+            background: rgba(15, 17, 26, 0.85);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* インラインSVGによるロゴ再現 */
+        .logo-svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            background: linear-gradient(45deg, #ffffff, var(--primary-emerald));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+
+        nav a {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-emerald);
+        }
+
+        /* ヒーローセクション */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 20px 60px 20px;
+            position: relative;
+        }
+
+        /* 象徴的な中央の大きな歯車ロゴ (CSSアニメーションで回転) */
+        .hero-logo-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .hero-gear {
+            animation: rotateGear 25s linear infinite;
+        }
+
+        @keyframes rotateGear {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .hero .tagline {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-emerald);
+            letter-spacing: 0.15em;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .hero .description {
+            max-width: 600px;
+            font-size: 1.05rem;
+            color: var(--text-sub);
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        /* ボタン共通 */
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            border-radius: 30px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 119, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 119, 255, 0.6);
+        }
+
+        /* コンテンツセクション */
+        section {
+            padding: 100px 4% 60px 4%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+            letter-spacing: 0.05em;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 4px;
+            background: var(--primary-emerald);
+            margin: 12px auto 0 auto;
+            border-radius: 2px;
+        }
+
+        /* ABOUTセクション */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .about-card {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 35px 30px;
+            border-radius: 16px;
+            position: relative;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .about-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 240, 181, 0.3);
+        }
+
+        .about-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .about-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .about-card p {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+        }
+
+        .highlight-text {
+            color: var(--primary-emerald);
+            font-weight: 600;
+        }
+
+        /* TIMELINE (活動記録) セクション */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary-emerald), var(--primary-blue), var(--primary-purple), transparent);
+            top: 0;
+            bottom: 0;
+            left: 30px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+            padding-left: 70px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: var(--bg-dark);
+            border: 4px solid var(--primary-emerald);
+            left: 22px;
+            top: 6px;
+            z-index: 2;
+        }
+
+        .timeline-item:nth-child(2) .timeline-dot { border-color: var(--primary-blue); }
+        .timeline-item:nth-child(3) .timeline-dot { border-color: var(--primary-purple); }
+        .timeline-item.future .timeline-dot { border-color: #4a4f63; background-color: #2a2e3d; }
+
+        .timeline-content {
+            background-color: var(--bg-card);
+            padding: 25px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .timeline-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .timeline-step {
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .timeline-item:nth-child(1) .timeline-step { color: var(--primary-emerald); background: rgba(0, 240, 181, 0.1); }
+        .timeline-item:nth-child(2) .timeline-step { color: var(--primary-blue); background: rgba(0, 119, 255, 0.1); }
+        .timeline-item:nth-child(3) .timeline-step { color: var(--primary-purple); background: rgba(138, 43, 226, 0.1); }
+
+        .timeline-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .timeline-desc {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+        }
+
+        /* LINE公式アカウントセクション */
+        .line-section {
+            background: linear-gradient(135deg, #161925 0%, #0f111a 100%);
+            border: 1px solid rgba(0, 240, 181, 0.15);
+            border-radius: 24px;
+            padding: 50px 40px;
+            text-align: center;
+            margin-top: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .line-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 185, 0, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .line-badge {
+            background-color: #06C755;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 15px;
+            letter-spacing: 0.05em;
+        }
+
+        .line-section h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .line-section p {
+            color: var(--text-sub);
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            font-size: 1rem;
+        }
+
+        .btn-line {
+            background-color: #06C755;
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 199, 85, 0.3);
+        }
+
+        .btn-line:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 199, 85, 0.5);
+            background-color: #05b34c;
+        }
+
+        /* フッター */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #4a4f63;
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 80px;
+        }
+
+        /* レスポンシブ対応 */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero .tagline { font-size: 1.2rem; }
+            header { padding: 15px 5%; }
+            nav { display: none; } /* 簡易化のためモバイルナブは非表示 */
+            .timeline::before { left: 15px; }
+            .timeline-item { padding-left: 45px; }
+            .timeline-dot { left: 7px; }
+            .line-section { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <!-- ヘッダー -->
+    <header>
+        <div class="logo-area">
+            <!-- ロゴ画像を模した高精度なSVG -->
+            <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(50,50)">
+                    <!-- 影効果 -->
+                    <path d="M0,-35 L10,-32 L15,-20 L27,-21 L28,-8 L35,0 L28,8 L27,21 L15,20 L10,32 L0,35 L-10,32 L-15,20 L-27,21 L-28,8 L-35,0 L-28,-8 L-27,-21 L-15,-20 L-10,-32 Z" fill="#252525" transform="translate(4, 4)"/>
+                    <!-- 歯車本体 (鮮やかなブルー/エメラルド風) -->
+                    <path d="M0,-35 L10,-32 L15,-20 L27,-21 L28,-8 L35,0 L28,8 L27,21 L15,20 L10,32 L0,35 L-10,32 L-15,20 L-27,21 L-28,8 L-35,0 L-28,-8 L-27,-21 L-15,-20 L-10,-32 Z" fill="#009ebd"/>
+                    <!-- 中央のくり抜き -->
+                    <circle cx="0" cy="0" r="18" fill="#0f111a" />
+                    <!-- 内側の光沢ライン -->
+                    <circle cx="0" cy="0" r="18" fill="none" stroke="#00f0b5" stroke-width="1.5" opacity="0.4" />
+                </g>
+            </svg>
+            <span class="logo-text">CODE・CORE</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#about">ABOUT</a></li>
+                <li><a href="#activity">ACTIVITY</a></li>
+                <li><a href="#contact">CONTACT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <section class="hero">
+        <div class="hero-logo-container">
+            <svg class="hero-gear" width="140" height="140" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(50,50)">
+                    <path d="M0,-35 L10,-32 L15,-20 L27,-21 L28,-8 L35,0 L28,8 L27,21 L15,20 L10,32 L0,35 L-10,32 L-15,20 L-27,21 L-28,8 L-35,0 L-28,-8 L-27,-21 L-15,-20 L-10,-32 Z" fill="#252525" transform="translate(3, 3)"/>
+                    <path d="M0,-35 L10,-32 L15,-20 L27,-21 L28,-8 L35,0 L28,8 L27,21 L15,20 L10,32 L0,35 L-10,32 L-15,20 L-27,21 L-28,8 L-35,0 L-28,-8 L-27,-21 L-15,-20 L-10,-32 Z" fill="#00a3c4"/>
+                    <circle cx="0" cy="0" r="18" fill="#0f111a" />
+                </g>
+            </svg>
+        </div>
+        <h1>CODE・CORE</h1>
+        <div class="tagline">Unprogramming</div>
+        <p class="description">
+            プログラミングの枠を超えて、僕たちの手で小松を変えていく。<br>
+            石川県小松市の高校生が集まり、街の未来をクリエイトするプロジェクトチーム。
+        </p>
+        <a href="#activity" class="btn btn-primary">活動を見る</a>
+    </section>
+
+    <!-- ABOUTセクション -->
+    <section id="about">
+        <h2 class="section-title">ABOUT US</h2>
+        <div class="about-grid">
+            <div class="about-card">
+                <span class="icon">📍</span>
+                <h3>活動拠点</h3>
+                <p>小松駅前のココロ躍るサイエンススポット<span class="highlight-text">「サイエンスヒルズこまつ」</span>で、アイデアをカタチにしています。</p>
+            </div>
+            <div class="about-card">
+                <span class="icon">🚀</span>
+                <h3>ミッション</h3>
+                <p>「小松市をもっとおもしろく、人が集まる街に！」高校生ならではの自由な視点と、テクノロジーを掛け合わせて企画・発信をします。</p>
+            </div>
+            <div class="about-card">
+                <span class="icon">💻</span>
+                <h3>Unprogramming</h3>
+                <p>コードを書くだけが全てじゃない。AI活用や企画、デザインまで、枠にとらわれない<span class="highlight-text">「アンプログラミング」</span>なスタイルで挑戦中！</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACTIVITY (タイムライン) セクション -->
+    <section id="activity">
+        <h2 class="section-title">ACTIVITY LOG</h2>
+        <div class="timeline">
+            
+            <!-- 第1回 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-meta">
+                        <span class="timeline-step">1st Mission</span>
+                    </div>
+                    <h3 class="timeline-title">チームアイデンティティの誕生</h3>
+                    <p class="timeline-desc">僕たちの活動を象徴するアカウント名「CODE・CORE」を決定！すべてはここから動き出しました。</p>
+                </div>
+            </div>
+
+            <!-- 第2回 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-meta">
+                        <span class="timeline-step">2nd Mission</span>
+                    </div>
+                    <h3 class="timeline-title">ファンページ作成 ＆ AIレポート発表</h3>
+                    <p class="timeline-desc">自分たちの「好きなもの」を詰め込んだファンページを制作。さらに小松市をより良くするための新しい企画を立案し、AIを活用してプロフェッショナルなレポートを作成・発表しました！</p>
+                </div>
+            </div>
+
+            <!-- 第3回 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-meta">
+                        <span class="timeline-step">3rd Mission</span>
+                    </div>
+                    <h3 class="timeline-title">ロゴデザイン ＆ キャッチフレーズ策定</h3>
+                    <p class="timeline-desc">チームの確固たる軸となるキャッチフレーズ「Unprogramming」を考案。同時に、青い歯車をモチーフにした無機質で洗練された公式ロゴを自分たちの手で完成させました。</p>
+                </div>
+            </div>
+
+            <!-- 現在・これから -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-meta">
+                        <span class="timeline-step" style="color:var(--primary-emerald); background:rgba(0,240,181,0.1);">Now & Future</span>
+                    </div>
+                    <h3 class="timeline-title">オフィシャルWEBサイト構築 ＆ 次なる挑戦へ</h3>
+                    <p class="timeline-desc">これまでの、そしてこれからどんどん続いていく僕たちの活動を世界に発信するためのWEBサイトを現在制作中！高校生のパワーで、プロジェクトはさらに加速します。</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CONTACT (LINE) セクション -->
+    <section id="contact">
+        <div class="line-section">
+            <span class="line-badge">LINE OFFICIAL</span>
+            <h3>あなたの「声」を届けてください！</h3>
+            <p>
+                「小松市にこんな場所がほしい！」「高校生でこんなおもしろいことを企てたい！」など、みなさんからのリアルな要望やアイデアをLINE公式アカウントで大募集しています。ここから僕たちの新しいプロジェクトが生まれるかも！？
+            </p>
+            <a href="#" class="btn btn-line">
+                💬 LINE公式アカウントから要望を送る
+            </a>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer>
+        <p>&copy; 2026 CODE・CORE - Unprogramming. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
